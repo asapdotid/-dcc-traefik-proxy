@@ -1,0 +1,9 @@
+http:
+  routers:
+    dashboard:
+      entryPoints:
+        - http
+      rule: Host(`__TRAEFIK_API_DASHBOARD_SUBDOMAIN.__DOMAIN_NAME`)
+      service: api@internal # This is the defined name for api. You cannot change it.
+      middlewares:
+        - traefikBasicAuth@file

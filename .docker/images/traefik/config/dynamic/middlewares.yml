@@ -1,0 +1,19 @@
+http:
+  middlewares:
+    # A basic authentification middleware, to protect the Traefik dashboard to anyone except myself
+    # Use with traefik.http.routers.myRouter.middlewares: "traefikBasicAuth@file"
+    traefikBasicAuth:
+      basicAuth:
+        users:
+          - "__TRAEFIK_BASIC_AUTH_USERNAME:__TRAEFIK_BASIC_AUTH_PASSWORD_HASH"
+
+    # Recommended default middleware for most of the services
+    # Use with traefik.http.routers.myRouter.middlewares: "default@file"
+    # Equivalent of traefik.http.routers.myRouter.middlewares: "securityHeaders@file,gzip@file"
+    default:
+      chain:
+        middlewares:
+          - gzip
+
+    gzip:
+      compress: {}
