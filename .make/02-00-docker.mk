@@ -26,7 +26,7 @@ DOCKER_SERVICE_NAME_LOGGER:=logger
 # $(DOCKER_SERVICE_NAME)------------------^      ^        traefik
 # $(ENV)-----------------------------------------^        local
 
-DOCKER_DIR:=./.docker
+DOCKER_DIR:=${PWD}/src
 DOCKER_ENV_FILE:=$(DOCKER_DIR)/.env
 DOCKER_COMPOSE_DIR:=$(DOCKER_DIR)/compose
 DOCKER_COMPOSE_FILE:=$(DOCKER_COMPOSE_DIR)/docker-compose.yml
@@ -72,13 +72,15 @@ endif
 
 .PHONY: docker-init
 docker-init: .docker/.env ## Docker initial environment
+docker-init:
+	@echo "Please update your src/.env file with your settings"
 
 .PHONY: docker-clean
 docker-clean: ## Remove the .env file for docker
 	@rm -f $(DOCKER_ENV_FILE)
 
 .PHONY: validate-docker-variables
-validate-docker-variables: .docker/.env
+validate-docker-variables:
 	@$(if $(TAG),,$(error TAG is undefined))
 	@$(if $(ENV),,$(error ENV is undefined))
 	@$(if $(DOCKER_REGISTRY),,$(error DOCKER_REGISTRY is undefined - Did you run make-init?))
