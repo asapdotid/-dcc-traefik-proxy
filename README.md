@@ -2,7 +2,7 @@
     <img src="docs/assets/img/traefik-backend.png" width="600" />
 </p>
 
-# Docker Compose for Traefik Proxy Container Service (http :80)
+# Docker Compose Traefik - Proxy Container Service (http :80)
 
 This guide shows you how to deploy your containers behind Traefik reverse-proxy.
 
@@ -32,14 +32,7 @@ sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-pl
 ### Step 2: Clone the Repository
 
 ```bash
-git clone https://github.com/asapdotid/dcc-traefik-proxy.git
-cd dcc-traefik
-```
-
-or
-
-```bash
-git clone git@github.com:wilopo-cargo/dcc-traefik-proxy.git
+git clone https://github.com/asapdotid/dcc-traefik.git
 cd dcc-traefik
 ```
 
@@ -63,8 +56,8 @@ COMPOSE_DOCKER_CLI_BUILD=1
 DOCKER_REGISTRY=docker.io
 DOCKER_NAMESPACE=asapdotid
 PROJECT_NAME=docker-traefik
-ENV=local
 TIMEZONE=Asia/Jakarta
+ENV=local
 ```
 
 ### Step 3: Make Initial Environment Variables
@@ -88,8 +81,8 @@ TRAEFIK_LOG_LEVEL=INFO                                                          
 TRAEFIK_DOMAIN_NAME=domain.com                                                        # Domain name
 TRAEFIK_DOCKER_NETWORK=proxy                                                          # Docker network
 TRAEFIK_DOCKER_ENTRYPOINT=tcp://dockersocket:2375                                     # Docker socket - Don't change
-TRAEFIK_API_DASHBOARD=true                                                            # Traefik Dashboard true|false
-TRAEFIK_API_INSECURE=false                                                            # Traefik Insecure Port :8080
+TRAEFIK_API_DASHBOARD=true                                                            # Traefik Dashboard true|false, disable dashboard (false)
+TRAEFIK_API_INSECURE=true                                                             # Traefik Insecure true|false, secure dashboard (false)
 TRAEFIK_API_DASHBOARD_SUBDOMAIN=monitor                                               # Traefik Dashboard subdomain monitor.domain.com
 TRAEFIK_BASIC_AUTH_USERNAME=admin                                                     # Traefik Dashboard basic auth username
 TRAEFIK_BASIC_AUTH_PASSWORD_HASH=JGFwcjEkOVdtNjRHalUkT2dBOEhJNEwxUzYxVXJXbE9aYkNaMQ== # Traefik Dashboard basic auth password encode base64 (read doc)
@@ -166,16 +159,16 @@ You can paste the username into the `TRAEFIK_USER` environment variable. The oth
 Optional create docker network `secure` & `proxy` for external used if integrate with other docker container and `DOCKER_EXTRENAL_NETWORK=true` on environment file:
 
 ```bash
-make docker-network ARGS="create secure"
+docker network create secure"
 ```
 
 and
 
 ```bash
-make docker-network ARGS="create proxy"
+docker network create proxy
 ```
 
-To do:
+To do copy env and build docker images with make commands:
 
 ```bash
 make init
@@ -183,8 +176,14 @@ make init
 make docker-init
 
 make docker-build
+```
 
-make docker-up / make docker-down
+Docker composer make commands:
+
+```bash
+make docker-up
+# or
+make docker-down
 ```
 
 ### Step 6: Additional Docker Service
@@ -252,6 +251,7 @@ Sample:
     ...
     labels:
       - traefik.enable=true
+      - traefil.docker.network=proxy
       - traefik.http.routers.portainer.entrypoints=http
       - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
@@ -267,6 +267,7 @@ nginx:
         - traefik
     labels:
         - traefik.enable=true
+        - traefil.docker.network=proxy
         - traefik.http.routers.portainer.entrypoints=http
         - traefik.http.routers.portainer.rule=Host(`app.${TRAEFIK_DOMAIN_NAME}`)
 ```
