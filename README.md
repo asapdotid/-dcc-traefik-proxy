@@ -235,6 +235,7 @@ portainer:
         - ../../.data/portainer:/data
     labels:
         - traefik.enable=true
+        - traefil.docker.network=proxy
         - traefik.http.routers.portainer.entrypoints=http
         - traefik.http.routers.portainer.rule=Host(`portainer.${TRAEFIK_DOMAIN_NAME}`)
         - traefik.http.services.portainer.loadbalancer.server.port=9000
