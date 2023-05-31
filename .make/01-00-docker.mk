@@ -64,6 +64,7 @@ ifndef EXECUTE_IN_CONTAINER
 endif
 ifeq ($(EXECUTE_IN_CONTAINER),true)
 	EXECUTE_IN_ANY_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME)
+	EXECUTE_IN_TRAEFIK_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_TRAEFIK)
 	EXECUTE_IN_DOCKER_SOCKET_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_DOCKER_SOCKET)
 	EXECUTE_IN_LOGGER_CONTAINER:=$(DOCKER_COMPOSE) exec -T $(DOCKER_SERVICE_NAME_LOGGER)
 endif
@@ -101,7 +102,7 @@ docker-build: docker-build-image ## Build the php image and then all other docke
 docker-prune: ## Remove ALL unused docker resources, including volumes
 	@docker system prune -a -f --volumes
 
-##@ [Docker Compose]
+##@ [Docker: Compose]
 
 .PHONY: compose-up
 compose-up: validate-docker-variables ## Create and start all docker containers. To create/start only a specific container, use DOCKER_SERVICE_NAME=<service>
