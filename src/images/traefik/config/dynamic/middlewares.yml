@@ -4,8 +4,9 @@ http:
     # Use with traefik.http.routers.myRouter.middlewares: "traefikBasicAuth@file"
     traefikBasicAuth:
       basicAuth:
+        removeHeader: true
         users:
-          - "__TRAEFIK_BASIC_AUTH_USERNAME:__TRAEFIK_BASIC_AUTH_PASSWORD_HASH"
+          - "admin:$apr1$W3jHMbEG$TCzyOICAWv/6kkraCHKYC0"
 
     # Recommended default middleware for most of the services
     # Use with traefik.http.routers.myRouter.middlewares: "default@file"
@@ -13,31 +14,58 @@ http:
     default:
       chain:
         middlewares:
-          - corsHeaders
-          - cacheHeaders
-          - gzip
+          - midRateLimit
+          - midSecurityHeaders
+          - midCorsHeaders
+          - midCacheHeaders
+          - midGzip
 
-    corsHeaders:
+    midRateLimit:
+      rateLimit:
+        average: 100
+        burst: 50
+
+    midSecurityHeaders:
+      headers:
+        customResponseHeaders:
+          X-Robots-Tag: none,noarchive,nosnippet,notranslate,noimageindex
+          server: ""
+          X-Forwarded-Proto: http
+        customRequestHeaders:
+          X-Forwarded-Proto: http
+        hostsProxyHeaders:
+          - X-Forwarded-Host
+        referrerPolicy: origin-when-cross-origin
+        contentTypeNosniff: true
+        browserXssFilter: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsSeconds: 63072000
+        stsPreload: true
+        frameDeny: true
+        contentSecurityPolicy: __TRAEFIK_MID_SEC_CONTENT_SECURITY_POLICY
+        permissionsPolicy: __TRAEFIK_MID_SEC_PERMISSION_POLICY
+
+    midCorsHeaders:
       headers:
         accessControlAllowCredentials: true
         accessControlAllowHeaders:
-          - Origin
-          - Authorization
-          - Content-Type
+          - "*"
         accessControlAllowMethods:
           - OPTION
           - GET
           - POST
           - PUT
+          - DELETE
           - PATCH
-        accessControlAllowOriginList: "__TRAEFIK_CORS_ALLOW_ORIGIN"
+        accessControlAllowOriginList: origin-list-or-null
         accessControlMaxAge: 100
         addVaryHeader: true
 
-    cacheHeaders:
+    midCacheHeaders:
       headers:
         customResponseHeaders:
           Cache-Control: "no-cache, max-age=0"
 
-    gzip:
+    midGzip:
       compress: {}
