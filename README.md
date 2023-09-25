@@ -32,8 +32,8 @@ sudo apt-get install git docker-ce docker-ce-cli containerd.io docker-compose-pl
 ### Step 2: Clone the Repository
 
 ```bash
-git clone https://github.com/asapdotid/dcc-traefik.git
-cd dcc-traefik
+git clone https://github.com/asapdotid/dcc-traefik-http.git
+cd dcc-traefik-http
 ```
 
 Make command help:
@@ -51,58 +51,19 @@ make init
 Modified file in `.make/.env` for build image
 
 ```ini
-DOCKER_BUILDKIT=1
-COMPOSE_DOCKER_CLI_BUILD=1
+# Project variables
 DOCKER_REGISTRY=docker.io
 DOCKER_NAMESPACE=asapdotid
-PROJECT_NAME=docker-traefik
-TIMEZONE=Asia/Jakarta
-ENV=local
+DOCKER_PROJECT_NAME=proxy
 ```
 
 ### Step 3: Make Initial Environment Variables
 
 ```bash
-make docker-init
+make set-init
 ```
 
-Modified file in `.docker/.env` for build image
-
-```ini
-# docker-compose env vars
-# @see https://docs.docker.com/compose/reference/envvars/
-COMPOSE_CONVERT_WINDOWS_PATHS=1
-
-# timezone
-TIMEZONE=Asia/Jakarta # Timezone for os and log level
-
-# Traefik config
-TRAEFIK_LOG_LEVEL=INFO                                                                # Traefik log level: INFO|ERROR|DEBUG
-TRAEFIK_DOMAIN_NAME=domain.com                                                        # Domain name
-TRAEFIK_DOCKER_NETWORK=proxy                                                          # Docker network
-TRAEFIK_DOCKER_ENTRYPOINT=tcp://dockersocket:2375                                     # Docker socket - Don't change
-TRAEFIK_API_DASHBOARD=true                                                            # Traefik Dashboard true|false, disable dashboard (false)
-TRAEFIK_API_INSECURE=true                                                             # Traefik Insecure true|false, secure dashboard (false)
-TRAEFIK_API_DASHBOARD_SUBDOMAIN=monitor                                               # Traefik Dashboard subdomain monitor.domain.com
-TRAEFIK_BASIC_AUTH_USERNAME=admin                                                     # Traefik Dashboard basic auth username
-TRAEFIK_BASIC_AUTH_PASSWORD_HASH=JGFwcjEkOVdtNjRHalUkT2dBOEhJNEwxUzYxVXJXbE9aYkNaMQ== # Traefik Dashboard basic auth password encode base64 (read doc)
-TEAEFIK_CORS_ALLOW_ORIGIN=origin-list-or-null                                         # Traefik enable CORS header
-
-# Docker compose config
-COMPOSE_NETWORK_DRIVER=bridge # Docker network driver
-COMPOSE_NETWORK_EXTERNAL=true # Docker network external
-
-# Traefik Ports config
-TRAEFIK_HOST_HTTP_PORT=80   # Traefik http port
-TRAEFIK_HOST_HTTPS_PORT=443 # Traefik https port
-
-# Docker image version
-SOCKET_PROXY_VERSION=0.1
-TRAEFIK_VERSION=2.10
-ALPINE_VERSION=3.18
-```
-
-The password is `adminpass` and you might want to change it before deploying to production.
+Modified file in `src/.env` for build image
 
 ### Step 4: Set Your Own Password
 
@@ -153,11 +114,11 @@ Check decode:
 echo 'JGFwcjEkVzNqSE1iRUckVEN6eU9JQ0FXdi82a2tyYUNIS1lDMAo=' | openssl enc -d -base64
 ```
 
-You can paste the username into the `TRAEFIK_USER` environment variable. The other part, `hashedPassword`, should be assigned to `TRAEFIK_PASSWORD_HASH`. Now you have your own `username`:`password` pair.
+You can paste the username into the `TRAEFIK_BASIC_AUTH_USERNAME` environment variable. The other part, `hashedPassword`, should be assigned to `TRAEFIK_BASIC_AUTH_PASSWORD_HASH`. Now you have your own `username`:`password` pair.
 
 ### Step 5: Launch Your Deployment
 
-Optional create docker network `secure` & `proxy` for external used if integrate with other docker container and `DOCKER_EXTRENAL_NETWORK=true` on environment file:
+Create docker network `secure` & `proxy` for external used with other docker container:
 
 ```bash
 docker network create secure"
@@ -172,19 +133,17 @@ docker network create proxy
 To do copy env and build docker images with make commands:
 
 ```bash
-make init
+make set-init
 
-make docker-init
-
-make docker-build
+make build
 ```
 
 Docker composer make commands:
 
 ```bash
-make docker-up
+make up
 # or
-make docker-down
+make down
 ```
 
 ### Step 6: Additional Docker Service
@@ -220,7 +179,7 @@ Setting correct email is important because it allows Let’s Encrypt to contact 
 
 Uncomment on docker compose file for `Portainer` service:
 
-File: `.docker/compose/docker-compose.local.yml`
+File: `src/compose/docker-compose.local.yml`
 
 ```yaml
 portainer:
