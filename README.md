@@ -2,7 +2,7 @@
     <img src="docs/assets/img/traefik-backend.png" width="600" />
 </p>
 
-# Docker Compose Traefik - Proxy Container Service (http :80)
+# Docker Compose Traefik - Proxy Container Service (HTTP :80)
 
 This guide shows you how to deploy your containers behind Traefik reverse-proxy.
 
@@ -118,7 +118,7 @@ You can paste the username into the `TRAEFIK_BASIC_AUTH_USERNAME` environment va
 
 ### Step 5: Launch Your Deployment
 
-Create docker network `secure` & `proxy` for external used with other docker container:
+Create docker network `secure` & `proxy` for external used with other docker containers:
 
 ```bash
 docker network create secure"
@@ -156,18 +156,18 @@ Can remove or command.
 ### Step 7: Test Your Deployment
 
 ```bash
-curl --insecure http://localhost/
+curl --insecure http://{domain_name}/
 ```
 
 You can also test it in the browser:
 
-http://localhost/
+http://{domain_name}/
 
-http://monitor.localhost/
+http://monitor.{domain_name}/
 
 ## Deploying on a Public Server With Real Domain
 
-Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME` environment variables. In case of `example.com`, your `.docker/.env` file should have the following lines:
+Let's say you have a domain `example.com` and it's DNS records point to your production server. Just repeat the local deployment steps, but don't forget to update `TRAEFIK_DOMAIN_NAME` environment variables. In case of `example.com`, your `src/.env` file should have the following lines:
 
 ```ini
 TRAEFIK_DOMAIN_NAME=example.com
@@ -241,4 +241,4 @@ MIT / BSD
 
 ## Author Information
 
-This Docker Compose Traefik Proxy was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
+This Docker Compose Traefik HTTP was created in 2022 by [Asapdotid](https://github.com/asapdotid) 🚀
