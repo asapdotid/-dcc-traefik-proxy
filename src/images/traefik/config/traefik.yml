@@ -1,12 +1,12 @@
 global:
-  checkNewVersion: true
-  sendAnonymousUsage: false
+  checkNewVersion: false
+  sendAnonymousUsage: true
 
 serversTransport:
   insecureSkipVerify: true
 
 entryPoints:
-  # Not used in apps, but redirect everything from HTTP to HTTPS
+  # Not used in apps, but redirect everything from HTTP
   http:
     address: :80
 
@@ -18,23 +18,23 @@ providers:
     watch: true
   # Docker provider for connecting all apps that are inside of the docker network
   docker:
-    endpoint: "__DOCKER_ENTRYPOINT"
-    network: __DOCKER_NETWORK
+    endpoint: "tcp://dockersocket:2375"
+    network: proxy
     exposedByDefault: false
     swarmModeRefreshSeconds: 15s
     watch: true
 
 # Enable traefik ui
 api:
-  dashboard: __TRAEFIK_API_DASHBOARD
-  insecure: __TRAEFIK_API_INSECURE
+  dashboard: true
+  insecure: true
 
 # Log level INFO|DEBUG|ERROR
 log:
-  level: __LOG_LEVEL
+  level: INFO
 
 accessLog:
-  filePath: "/var/log/traefik/access.log"
+  filePath: /var/log/traefik/access.log
   fields:
     names:
       StartUTC: drop
